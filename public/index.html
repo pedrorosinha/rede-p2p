@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>P2P Sync</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { font-family: sans-serif; margin: 20px; }
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #ddd; padding: 8px; }
+      th { background: #f0f0f0; }
+      #status { margin-bottom: 10px; color: #555; }
+      button { margin-left: 5px; }
+    </style>
+  </head>
+  <body>
+    <h1>P2P Sync</h1>
+    <div id="status">Carregando...</div>
+
+    <div>
+      <input type="file" id="fileInput" />
+      <button id="btnUpload">Enviar</button>
+      <button id="btnSync">Sincronizar agora</button>
+    </div>
+
+    <h3>Arquivos</h3>
+    <table id="filesTbl">
+      <thead>
+        <tr><th>Nome</th><th>Tamanho (bytes)</th><th>Modificado</th><th>Ação</th></tr>
+      </thead>
+      <tbody id="filesBody"></tbody>
+    </table>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

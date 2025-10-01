@@ -1,0 +1,8 @@
+{
+  "port": 5501,
+  "dir": "c:\\Users\\pedro\\trabalho-p2p\\data-node1",
+  "peers": [
+    "http://localhost:5502",
+    "http://localhost:5503"
+  ]
+}

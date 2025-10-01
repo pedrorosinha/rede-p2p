@@ -1,0 +1,16 @@
+{
+  "name": "trabalho-p2p",
+  "version": "1.0.0",
+  "description": "P2P distributed file sync with 3+ peers in JS + HTML",
+  "main": "server.js",
+  "scripts": {
+    "start:node1": "node server.js --config config-node1.json",
+    "start:node2": "node server.js --config config-node2.json",
+    "start:node3": "node server.js --config config-node3.json"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^2.7.0"
+  }
+}
