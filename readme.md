@@ -74,6 +74,8 @@ npm run start:node3
   ]
 }
 
+**Obs: Configurar o camiinho do diretório**
+
 # 2. Ajusta o package.json para criar um script 
 # Exemplo
 ```bash "start:node{valor}": "node server.js --config config-node{valor}.json"
