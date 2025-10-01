@@ -43,3 +43,37 @@ cd rede-p2p
 
 # Instale as dependências
 npm install
+
+
+## Execução
+
+Abra 3 terminais e rode:
+
+# Terminal 1
+```bash
+npm run start:node1
+
+# Terminal 2
+```bash
+npm run start:node2
+
+# Terminal 3
+```bash
+npm run start:node3
+
+
+## Para criar um node
+
+# 1. Cria o arquivo config-node{valor}.json
+```bash {
+  "port": 5502,
+  "dir": "c:\\Users\\pedro\\trabalho-p2p\\data-node2",
+  "peers": [
+    "http://localhost:5501",
+    "http://localhost:5503"
+  ]
+}
+
+# 2. Ajusta o package.json para criar um script 
+# Exemplo
+```bash "start:node{valor}": "node server.js --config config-node{valor}.json"

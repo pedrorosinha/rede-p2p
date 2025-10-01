@@ -33,8 +33,6 @@ fs.mkdirSync(config.dir, { recursive: true });
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, config.dir),
   filename: (req, file, cb) => {
-    // FIX 1: Corrigir a codificação do nome do arquivo no upload
-    // O navegador pode enviar o nome em 'latin1', então o convertemos para 'utf8'
     const decodedFileName = Buffer.from(file.originalname, 'latin1').toString('utf8');
     cb(null, path.basename(decodedFileName));
   }
@@ -56,8 +54,6 @@ async function listLocalFiles() {
     const st = await fsp.stat(full);
     if (!st.isFile()) continue;
     out.push({
-      // FIX 2 (Simplificação): O encode/decode era desnecessário aqui.
-      // O nome já vem do sistema de arquivos na codificação correta.
       name: name,
       size: st.size,
       mtimeMs: st.mtimeMs
@@ -92,7 +88,6 @@ app.get('/api/files/:name', async (req, res) => {
 app.delete('/api/files/:name', async (req, res) => {
   let name;
   try {
-    // ALTERAÇÃO AQUI: Decodifica o nome do arquivo da URL
     name = decodeURIComponent(req.params.name);
   } catch (e) {
     // Se a decodificação falhar, é um nome inválido
