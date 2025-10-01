@@ -8,10 +8,10 @@ function fmtDate(ms) {
   try { return new Date(ms).toLocaleString(); } catch { return String(ms); }
 }
 
-// codificação segura para nomes UTF-8
+// Codificação segura para nomes UTF-8
 function safeEncode(str) {
   return encodeURIComponent(new TextEncoder().encode(str)
-    .reduce((acc, b) => acc + '%' + b.toString(16).padStart(2,'0'), ''));
+    .reduce((acc, b) => acc + '%' + b.toString(16).padStart(2, '0'), ''));
 }
 
 async function loadStatus() {
@@ -44,7 +44,7 @@ async function loadFiles() {
       tbody.appendChild(tr);
     }
 
-    // evento remover
+    // Evento para remover arquivos
     tbody.querySelectorAll('button').forEach(btn => {
       btn.onclick = async () => {
         const name = btn.dataset.name;
@@ -52,7 +52,7 @@ async function loadFiles() {
         try {
           const resp = await fetch('/api/files/' + safeEncode(name), { method: 'DELETE' });
           if (!resp.ok) throw new Error('Falha ao remover');
-          loadFiles();
+          await loadFiles();
         } catch (e) {
           alert(e.message);
         }
@@ -60,10 +60,11 @@ async function loadFiles() {
     });
 
   } catch (e) {
-    console.error(e);
+    console.error('Erro ao carregar arquivos:', e);
   }
 }
 
+// Envio de arquivo manual
 document.getElementById('btnUpload').addEventListener('click', async () => {
   const inp = document.getElementById('fileInput');
   if (!inp.files || !inp.files[0]) return alert('Selecione um arquivo');
@@ -72,17 +73,39 @@ document.getElementById('btnUpload').addEventListener('click', async () => {
   try {
     const r = await fetch('/api/upload', { method: 'POST', body: fd });
     if (!r.ok) throw new Error('Upload falhou');
-    await loadFiles();
+    await loadFiles(); // Atualiza a lista de arquivos local
   } catch (e) {
     alert(e.message);
   }
 });
 
+// Botão manual de sincronização
 document.getElementById('btnSync').addEventListener('click', async () => {
   try {
     await fetch('/api/sync/trigger', { method: 'POST' });
-    setTimeout(loadFiles, 1000);
-  } catch {}
+    setTimeout(loadFiles, 1000); // Aguarda antes de recarregar
+  } catch (e) {
+    console.error('Erro ao sincronizar:', e);
+  }
 });
 
+// Inicializa
 loadStatus().then(loadFiles);
+
+// 🔌 WebSocket: conexão com servidor via socket.io
+const socket = io(); // conecta ao servidor atual (ex: http://localhost:5501)
+
+socket.on('connect', () => {
+  console.log('Conectado ao servidor via WebSocket.');
+});
+
+// Ao receber evento 'sync' do servidor (ou de outro peer), sincroniza
+socket.on('sync', async () => {
+  console.log('Solicitação de sincronização recebida via WebSocket.');
+  try {
+    await fetch('/api/sync/trigger', { method: 'POST' });
+    await loadFiles();
+  } catch (e) {
+    console.error('Erro ao sincronizar via WebSocket:', e);
+  }
+});

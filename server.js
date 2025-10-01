@@ -177,6 +177,27 @@ app.post('/api/sync/trigger', async (req, res) => {
   }
 });
 
-app.listen(config.port, () => {
+const http = require('http');
+const { Server } = require('socket.io');
+
+// Cria servidor HTTP usando o Express
+const server = http.createServer(app);
+
+// Inicializa o Socket.IO
+const io = new Server(server);
+
+// Quando um cliente se conecta via WebSocket
+io.on('connection', (socket) => {
+  console.log('Cliente conectado via WebSocket');
+
+  // Se quiser lidar com eventos personalizados (opcional):
+  socket.on('request-sync', () => {
+    console.log('Requisição de sincronização recebida via WebSocket');
+    socket.broadcast.emit('sync'); // Envia o evento 'sync' para todos os outros clientes
+  });
+});
+
+// Agora o servidor escuta via HTTP + WebSocket
+server.listen(config.port, () => {
   console.log(`Servidor P2P rodando em http://localhost:${config.port}`);
 });
