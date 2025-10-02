@@ -1,8 +1,0 @@
-{
-  "port": 5501,
-  "dir": "C:\\Users\\prosinha\\Documents\\rede-p2p\\data-node1",
-  "peers": [
-    "http://localhost:5502",
-    "http://localhost:5503"
-  ]
-}
