@@ -42,10 +42,15 @@ peers.forEach(currentPeer => {
 
   server.bind(currentPeer.port, () => {
     console.log(`[${currentPeer.name}] Escutando na porta ${currentPeer.port}...`);
+
+    // Após bind, aguarda 2s e dispara envio dos arquivos da pasta files/{peerName}
+    setTimeout(() => {
+      enviarArquivosDaPasta(currentPeer.name);
+    }, 2000);
   });
 });
 
-// Função para enviar arquivo MANUALMENTE de um peer para os outros
+// Função para enviar um arquivo de um peer para os outros
 async function enviarArquivoDePeer(peerName, arquivoPath) {
   const sender = peers.find(p => p.name === peerName);
   if (!sender) {
@@ -88,5 +93,54 @@ async function enviarArquivoDePeer(peerName, arquivoPath) {
   setTimeout(() => client.close(), 2000);
 }
 
-// Expor a função para o console (no Node REPL)
-module.exports = { enviarArquivoDePeer };
+// Função para enviar todos arquivos da pasta files/{peerName}
+function enviarArquivosDaPasta(peerName) {
+  const dir = path.join(__dirname, 'files', peerName);
+  if (!fs.existsSync(dir)) {
+    console.log(`[${peerName}] Diretório ${dir} não existe. Nada a enviar.`);
+    return;
+  }
+
+  const arquivos = fs.readdirSync(dir).filter(f => fs.statSync(path.join(dir, f)).isFile());
+  if (arquivos.length === 0) {
+    console.log(`[${peerName}] Nenhum arquivo para enviar na pasta ${dir}`);
+    return;
+  }
+
+  console.log(`[${peerName}] Enviando ${arquivos.length} arquivo(s) da pasta ${dir}`);
+
+  arquivos.forEach(arquivo => {
+    const arquivoCompleto = path.join(dir, arquivo);
+    enviarArquivoDePeer(peerName, arquivoCompleto);
+  });
+}
+
+// Função para listar arquivos recebidos de um peer
+function listarArquivos(peerName) {
+  const dir = path.join(__dirname, 'received', peerName);
+  if (!fs.existsSync(dir)) {
+    console.log(`[${peerName}] Diretório não encontrado.`);
+    return;
+  }
+  const files = fs.readdirSync(dir);
+  if (files.length === 0) {
+    console.log(`[${peerName}] Nenhum arquivo encontrado.`);
+  } else {
+    console.log(`[${peerName}] Arquivos:`);
+    files.forEach(f => console.log(` - ${f}`));
+  }
+}
+
+// Função para deletar um arquivo de um peer
+function deletarArquivo(peerName, filename) {
+  const filePath = path.join(__dirname, 'received', peerName, filename);
+  if (!fs.existsSync(filePath)) {
+    console.log(`[${peerName}] Arquivo ${filename} não existe.`);
+    return;
+  }
+  fs.unlinkSync(filePath);
+  console.log(`[${peerName}] Arquivo ${filename} deletado.`);
+}
+
+// Expor as funções para uso manual se quiser
+module.exports = { enviarArquivoDePeer, listarArquivos, deletarArquivo };

@@ -17,7 +17,14 @@ A aplicação simula uma pequena rede de **3 nós (peers)**, onde cada nó pode 
 
 Os arquivos recebidos via UDP são salvos na pasta `files/` dentro do projeto, com subpastas para cada peer, por exemplo:
 ```bash
-    files/peer1/arquivos
+
+files/
+├── peer1/
+│ └── arquivo1.txt
+├── peer2/
+│ └── arquivo2.txt
+└── peer3/
+└── arquivo3.txt
 
 Versões recomendadas:
 
